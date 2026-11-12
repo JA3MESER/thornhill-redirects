@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Redirecting… — Thornhill Corporation</title>
+  <link rel="icon" type="image/png" href="/assets/img/icon-dark-96.png">
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px; text-align: center;
+           font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #07090e; color: #f4f6fa; }
+    .box { max-width: 440px; opacity: 0; transition: opacity .3s; }
+    .box.show { opacity: 1; }
+    img { width: 56px; height: 56px; border-radius: 14px; margin-bottom: 18px; }
+    h1 { font-size: 1.5rem; margin: 0 0 8px; letter-spacing: -0.02em; }
+    p { color: #a8b1c2; line-height: 1.6; margin: 0 0 22px; }
+    a.btn { display: inline-block; padding: 12px 22px; border-radius: 999px; background: #2563eb; color: #fff; font-weight: 700; text-decoration: none; }
+    a.btn:hover { background: #1d4ed8; }
+    .spinner { width: 30px; height: 30px; margin: 0 auto 16px; border-radius: 50%; border: 3px solid rgba(255,255,255,.15); border-top-color: #4f86ff; animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="box" id="box">
+    <img src="/assets/img/icon-dark-96.png" alt="Thornhill Corporation">
+    <div class="spinner" id="spin"></div>
+    <h1 id="title">Redirecting…</h1>
+    <p id="text">Taking you to your destination.</p>
+    <a class="btn" id="home" href="#" hidden>Go to Thornhill Corporation</a>
+  </div>
+
+  <script src="/assets/js/config.js?v=20261112e"></script>
+  <script src="/assets/js/store.js?v=20261112e"></script>
+  <script>
+  /* Thornhill Corporation — Redirects
+     GitHub Pages shows this page for every address on this site, so we look the
+     address up (e.g. /Roblox/Thornhill) and forward the visitor to its destination. */
+  (function () {
+    const box = document.getElementById("box");
+    const show = () => box.classList.add("show");
+    const reveal = setTimeout(show, 600);            // only show "Redirecting…" if it takes a moment
+    const home = document.getElementById("home");
+    home.href = ThornhillSites.main();
+
+    const path = decodeURIComponent(location.pathname).replace(/^\/+|\/+$/g, "");
+    if (!path) { location.replace(ThornhillSites.main()); return; }
+
+    function notFound(title, text) {
+      clearTimeout(reveal);
+      document.getElementById("spin").hidden = true;
+      document.getElementById("title").textContent = title;
+      document.getElementById("text").textContent = text;
+      document.title = title + " — Thornhill Corporation";
+      home.hidden = false;
+      show();
+    }
+
+    ThornhillStore.resolveRedirect(path).then(dest => {
+      if (dest && /^https?:\/\//i.test(dest)) location.replace(dest);
+      else notFound("Link not found", "This Thornhill link doesn't exist or has been removed. Check the link you were given.");
+    }).catch(() => notFound("Something went wrong", "We couldn't open this link right now. Please try again in a moment."));
+  })();
+  </script>
+</body>
+</html>
